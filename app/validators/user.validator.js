@@ -1,4 +1,4 @@
-const { query, body } = require("express-validator");
+const { body } = require("express-validator");
 const validate = require("./index.js").validate;
 const User = require("../db/models").User;
 

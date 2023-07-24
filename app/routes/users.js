@@ -48,6 +48,6 @@ router.post("/login", userValidator.createValidationRules(false), userValidator.
  * @returns {object} 200 - An array of user info
  * @returns {Error}  default - Unexpected error
  */
-router.get("/users", token.checkSession, user.getUsers)
+router.get("/users", token.validToken, token.checkToken, user.getUsers)
 
 module.exports = router

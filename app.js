@@ -1,6 +1,5 @@
 require('dotenv-flow').config();
 const express = require('express');
-const session = require('express-session');
 const bodyParser = require('body-parser')
 const logger = require('morgan');
 const expressSwaggerWrapper = require("express-swagger-generator");
@@ -17,17 +16,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json())
-
-// Configure express-session middleware
-app.use(
-    session({
-      secret: 'demoCali',
-      resave: false,
-      saveUninitialized: true,
-      cookie: { secure: false } // Set to 'true' for HTTPS only
-    })
-);
-  
 
 app.use('/', usersRouter);
 app.use('/example', exampleRouter);
@@ -57,5 +45,14 @@ const options = {
   files: ["./app/routes/*.js", "./app/controllers/**/*.js"], //Path to the API handle folder
 };
 expressSwagger(options);
+
+// error handler
+app.use(function(err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+    res.json({ error: err });
+  });
 
 module.exports = app;
