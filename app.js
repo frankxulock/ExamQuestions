@@ -4,7 +4,8 @@ const bodyParser = require('body-parser')
 const logger = require('morgan');
 const expressSwaggerWrapper = require("express-swagger-generator");
 
-const exampleRouter = require('./controllers/example');
+const exampleRouter = require('./app/controllers/example');
+const usersRouter = require('./app/routes/users');
 const packageJson = require('./package.json');
 
 const { PORT } = process.env;
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
 app.use('/example', exampleRouter);
+app.use('/users', usersRouter);
 
 const expressSwagger = expressSwaggerWrapper(app);
 const options = {
@@ -40,7 +42,7 @@ const options = {
     },
   },
   basedir: __dirname, //app absolute path
-  files: ["./controllers/**/*.js"], //Path to the API handle folder
+  files: ["./app/routes/*.js", "./app/controllers/**/*.js"], //Path to the API handle folder
 };
 expressSwagger(options);
 
