@@ -44,10 +44,10 @@ router.post("/login", userValidator.createValidationRules(false), userValidator.
  * @group User - Operations about user
  * @param {string} name.query - Name
  * @param {integer} page.query - Page - 1
- * @param {integer} paginate.query - Paginate - 10
+ * @param {integer} pageSize.query - PageSize - 10
  * @returns {object} 200 - An array of user info
  * @returns {Error}  default - Unexpected error
  */
-router.get("/users", token.validToken, token.checkToken, user.getUsers)
+router.get("/users", token.checkTokenEmpty, token.validToken, token.checkToken, user.getUsers)
 
 module.exports = router

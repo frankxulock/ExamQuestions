@@ -29,15 +29,20 @@ const token = {
         },
         algorithms: ["HS256"]
     }),
-    checkToken: async (req, res, next) => {
+    checkTokenEmpty: async (req, res, next) => {
         const tok = token.getToken(req);
+        if(!tok){
+            res.status(401).json({message: "permission denied"});
+        } else{
+            next();
+        }
+    }, 
+    checkToken: async (req, res, next) => {
         const auth = req.auth;
         if(auth) {
             const email = auth.email;
             const checkEmailRes = await User.findOne({ where: { email }, paranoid: false });
             if(!checkEmailRes) res.status(401).json({ message: "token error user not exist" });
-        } else if(!tok){
-            res.send({message: "Authentication is invalid or not logged in, please log in again"});
         } else{
             next();
         }

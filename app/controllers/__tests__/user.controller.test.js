@@ -153,7 +153,7 @@ const getErrors = (errors) => {
 
 describe("test Get users API", () => {
     it("should test get users success", async () => {
-        const user = { email: "geekjc123@gmail1.com" };
+        const user = { email: "geekjc123@gmail.com" };
         const token = jwt.sign(user, secretKey, { expiresIn: '12h' });
         const res = await request(app)
             .get('/users')
@@ -163,15 +163,50 @@ describe("test Get users API", () => {
         if(users) dataLength = users.length;
         expect(dataLength).toBeGreaterThanOrEqual(0);
     });
-    // it("should test Authorization got empty token", async () => {
-    //     const token = "";
-    //     const res = await request(app)
-    //         .get('/users')
-    //         .set('Authorization', `Bearer ${token}`)
-    //     const users = res.body.data;
-    //     console.log('res.body :>> ', res.body);
-    //     let dataLength = -1;
-    //     if(users) dataLength = users.length;
-    //     expect(dataLength).toBeGreaterThanOrEqual(0);
-    // });
+    it("should test Authorization got empty token", async () => {
+        const token = "";
+        const res = await request(app)
+            .get('/users')
+            .set('Authorization', `Bearer ${token}`)
+        const code = res.statusCode;
+        expect(code).toEqual(401);
+    });
+    it("should test Authorization wrong token", async () => {
+        const token = "test11111111";
+        const res = await request(app)
+            .get('/users')
+            .set('Authorization', `Bearer ${token}`)
+        const code = res.statusCode;
+        expect(code).toEqual(401);
+    });
+    it("should test name fuzzy search", async () => {
+        const name = "test";
+        const user = { email: "geekjc123@gmail.com" };
+        const token = jwt.sign(user, secretKey, { expiresIn: '12h' });
+        const res = await request(app)
+            .get('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .query({
+                name,
+            })
+        const users = res.body.data;
+        let searchSuccess = "false";
+        if(!users.some(user => user.indexOf(name) < 0)) searchSuccess = "true";
+        expect(searchSuccess).toBe("true");
+    });
+    it("should test pageSize got greater than 50", async () => {
+        const pageSize = 99;
+        const user = { email: "geekjc123@gmail.com" };
+        const token = jwt.sign(user, secretKey, { expiresIn: '12h' });
+        const res = await request(app)
+            .get('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .query({
+                pageSize,
+            })
+        const users = res.body.data;
+        let dataLength = -1;
+        if(users) dataLength = users.length;
+        expect(dataLength).toBeLessThanOrEqual(50);
+    });
 })
