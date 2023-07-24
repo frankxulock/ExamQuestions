@@ -1,5 +1,6 @@
 require('dotenv-flow').config();
 const express = require('express');
+const session = require('express-session');
 const bodyParser = require('body-parser')
 const logger = require('morgan');
 const expressSwaggerWrapper = require("express-swagger-generator");
@@ -17,8 +18,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
+// Configure express-session middleware
+app.use(
+    session({
+      secret: 'demoCali',
+      resave: false,
+      saveUninitialized: true,
+      cookie: { secure: false } // Set to 'true' for HTTPS only
+    })
+);
+  
+
+app.use('/', usersRouter);
 app.use('/example', exampleRouter);
-app.use('/users', usersRouter);
 
 const expressSwagger = expressSwaggerWrapper(app);
 const options = {
