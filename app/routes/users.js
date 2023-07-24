@@ -41,7 +41,7 @@ router.post("/login", userValidator.createValidationRules(false), userValidator.
 // GET users list
 /**
  * @route GET /users
- * @group User - Operations about user
+ * @group User - Operations about users
  * @param {string} name.query - Name
  * @param {integer} page.query - Page - 1
  * @param {integer} pageSize.query - PageSize - 10
@@ -49,5 +49,16 @@ router.post("/login", userValidator.createValidationRules(false), userValidator.
  * @returns {Error}  default - Unexpected error
  */
 router.get("/users", token.checkTokenEmpty, token.validToken, token.checkToken, user.getUsers)
+
+// GET user detail data
+/**
+ * @route GET /users/{id}
+ * @group User - Operations about user
+ * @param {string} id.path.required - User ID - User ID 
+ * @param {User.model} data.body test - Some Name description - Data body
+ * @returns {object} 200 - user info
+ * @returns {Error}  default - Unexpected error
+ */
+router.get("/:id", user.getUser)
 
 module.exports = router

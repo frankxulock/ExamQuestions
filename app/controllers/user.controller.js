@@ -51,3 +51,15 @@ exports.getUsers = async (req, res) => {
         })
     }   
 }
+
+exports.getUser = async (req, res) => {
+    try {
+      const paramId = req.params.id
+      const getUser = await User.findOne({ where: { id: paramId }, attributes: ["id", "created_at", "email", "name"] })
+      res.send({data: getUser})
+    } catch(err) {
+      res.status(400).send({
+        message: err.message || "null"
+      })
+    }
+  }
