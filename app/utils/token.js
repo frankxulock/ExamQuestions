@@ -41,8 +41,13 @@ const token = {
         const auth = req.auth;
         if(auth) {
             const email = auth.email;
-            const checkEmailRes = await User.findOne({ where: { email }, paranoid: false });
-            if(!checkEmailRes) res.status(401).json({ message: "token error user not exist" });
+            User.findOne({ where: { email: email }, paranoid: false }).then(user => {
+                if(!user) {
+                    res.status(401).json({ message: "token error user not exist" });
+                } else {
+                    next();
+                }
+            });
         } else{
             next();
         }

@@ -17,8 +17,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
-app.use('/', usersRouter);
 app.use('/example', exampleRouter);
+app.use('/', usersRouter);
 
 const expressSwagger = expressSwaggerWrapper(app);
 const options = {
@@ -51,8 +51,11 @@ app.use(function(err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-    res.json({ error: err });
+    if(err.status == 401) {
+        res.status(401).json({message: "permission denied"});
+    } else {
+        res.json({ error: err });
+    }
   });
 
 module.exports = app;
